@@ -19,10 +19,19 @@ public class UserService {
     }
 
     public User getCurrentUser() {
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext()
-                .getAuthentication().getPrincipal();
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getPrincipal() == null) {
+            throw new RuntimeException("No authenticated user found");
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof String && "anonymousUser".equals(principal)) {
+            throw new RuntimeException("User is not authenticated");
+        }
+
+        UserDetails userDetails = (UserDetails) principal;
         return userRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found: " + userDetails.getUsername()));
     }
 
     public UserResponse getCurrentUserResponse() {
