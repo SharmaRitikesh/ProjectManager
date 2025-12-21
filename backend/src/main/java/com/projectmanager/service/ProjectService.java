@@ -33,6 +33,7 @@ public class ProjectService {
         this.userService = userService;
     }
 
+    @Transactional(readOnly = true)
     public List<ProjectResponse> getAllProjects() {
         User currentUser = userService.getCurrentUser();
         List<Project> projects = projectRepository.findAllByUserAccess(currentUser);
@@ -42,6 +43,7 @@ public class ProjectService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public ProjectResponse getProjectById(Long id) {
         Project project = projectRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Project not found with id: " + id));
@@ -107,6 +109,7 @@ public class ProjectService {
     }
 
     // Member management
+    @Transactional(readOnly = true)
     public List<MemberResponse> getProjectMembers(Long projectId) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));

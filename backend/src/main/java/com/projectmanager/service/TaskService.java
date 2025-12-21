@@ -36,6 +36,7 @@ public class TaskService {
         this.userService = userService;
     }
 
+    @Transactional(readOnly = true)
     public List<TaskResponse> getTasksByProject(Long projectId) {
         Project project = projectRepository.findById(projectId)
                 .orElseThrow(() -> new RuntimeException("Project not found with id: " + projectId));
@@ -47,6 +48,7 @@ public class TaskService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<TaskResponse> getMyTasks() {
         User currentUser = userService.getCurrentUser();
         return taskRepository.findActiveTasksByAssignee(currentUser).stream()
@@ -54,12 +56,14 @@ public class TaskService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<TaskResponse> getOverdueTasks() {
         return taskRepository.findOverdueTasks(LocalDate.now()).stream()
                 .map(TaskResponse::fromEntity)
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public TaskResponse getTaskById(Long id) {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
