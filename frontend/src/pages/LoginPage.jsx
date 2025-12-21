@@ -46,8 +46,9 @@ function LoginPage() {
                     <div className="auth-logo">
                         <div className="logo-icon">PM</div>
                     </div>
-                    <h1>Welcome Back!</h1>
-                    <p>{greeting}! Sign in to continue</p>
+                    <h1>{greeting}! 👋</h1>
+                    <p className="auth-subtext">Sign in to continue your amazing work</p>
+                    <p className="auth-motivation">"Great things are built one task at a time"</p>
                 </div>
 
                 <form onSubmit={handleSubmit} className="auth-form">

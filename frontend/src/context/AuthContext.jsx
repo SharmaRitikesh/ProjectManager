@@ -6,6 +6,7 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [isNewUser, setIsNewUser] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -37,8 +38,17 @@ export function AuthProvider({ children }) {
         localStorage.setItem('token', token);
         const userData = { id, username: name, email, fullName, systemRole };
         localStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
 
+        // Check if this is a returning user
+        const hasLoggedBefore = localStorage.getItem(`user_${id}_visited`);
+        if (hasLoggedBefore) {
+            setIsNewUser(false);
+        } else {
+            localStorage.setItem(`user_${id}_visited`, 'true');
+            setIsNewUser(false); // Returning login, not new signup
+        }
+
+        setUser(userData);
         return response.data;
     };
 
@@ -49,8 +59,12 @@ export function AuthProvider({ children }) {
         localStorage.setItem('token', token);
         const user = { id, username, email, fullName, systemRole };
         localStorage.setItem('user', JSON.stringify(user));
-        setUser(user);
 
+        // Mark as new user for welcome message
+        setIsNewUser(true);
+        localStorage.setItem(`user_${id}_visited`, 'true');
+
+        setUser(user);
         return response.data;
     };
 
@@ -60,6 +74,8 @@ export function AuthProvider({ children }) {
         setUser(null);
     };
 
+    const clearNewUserFlag = () => setIsNewUser(false);
+
     const value = {
         user,
         loading,
@@ -67,6 +83,8 @@ export function AuthProvider({ children }) {
         register,
         logout,
         isAuthenticated: !!user,
+        isNewUser,
+        clearNewUserFlag,
     };
 
     return (

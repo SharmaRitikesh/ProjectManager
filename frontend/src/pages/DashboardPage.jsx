@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { projectAPI, taskAPI, userAPI, adminAPI } from '../api/axios';
 import { useAuth } from '../context/AuthContext';
@@ -6,7 +6,7 @@ import Modal from '../components/common/Modal';
 import './DashboardPage.css';
 
 function DashboardPage() {
-    const { user } = useAuth();
+    const { user, isNewUser, clearNewUserFlag } = useAuth();
     const [projects, setProjects] = useState([]);
     const [myTasks, setMyTasks] = useState([]);
     const [allUsers, setAllUsers] = useState([]);
@@ -21,8 +21,31 @@ function DashboardPage() {
 
     const isAdmin = user?.systemRole === 'ADMIN' || user?.systemRole === 'MANAGER';
 
+    // Get time-based greeting
+    const greeting = useMemo(() => {
+        const hour = new Date().getHours();
+        if (hour >= 5 && hour < 12) return 'Good Morning';
+        if (hour >= 12 && hour < 17) return 'Good Afternoon';
+        if (hour >= 17 && hour < 21) return 'Good Evening';
+        return 'Good Night';
+    }, []);
+
+    // Random motivational quotes
+    const motivationalQuotes = [
+        "Every task completed is a step towards success! 🚀",
+        "You're doing amazing! Keep up the great work! ✨",
+        "Progress, not perfection! 💪",
+        "Today's efforts are tomorrow's achievements! 🌟",
+        "Stay focused and crush your goals! 🎯"
+    ];
+    const randomQuote = useMemo(() => motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)], []);
+
     useEffect(() => {
         loadDashboardData();
+        // Clear new user flag after showing welcome message
+        if (isNewUser) {
+            setTimeout(() => clearNewUserFlag(), 5000);
+        }
     }, []);
 
     const loadDashboardData = async () => {
@@ -130,8 +153,14 @@ function DashboardPage() {
     return (
         <div className="dashboard animate-fade-in">
             <div className="page-header">
-                <h1>Welcome back, {user?.fullName || user?.username}! 👋</h1>
-                <p>Here's an overview of your projects and tasks</p>
+                <h1>
+                    {isNewUser
+                        ? `Welcome, ${user?.fullName || user?.username}! 🎉`
+                        : `Welcome back, ${user?.fullName || user?.username}! 👋`
+                    }
+                </h1>
+                <p className="greeting-time">{greeting}!</p>
+                <p className="motivation-quote">{randomQuote}</p>
             </div>
 
             {/* Admin Quick Actions */}

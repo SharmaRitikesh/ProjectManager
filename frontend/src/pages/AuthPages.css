@@ -86,3 +86,17 @@
 .auth-footer a:hover {
     color: var(--accent-hover);
 }
+
+/* Motivational Subtext */
+.auth-subtext {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.auth-motivation {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    font-style: italic;
+    opacity: 0.8;
+}

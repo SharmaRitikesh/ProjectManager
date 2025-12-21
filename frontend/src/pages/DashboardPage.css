@@ -2,6 +2,21 @@
     max-width: 1400px;
 }
 
+/* Greeting Styles */
+.greeting-time {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: var(--spacing-xs);
+}
+
+.motivation-quote {
+    font-size: 0.9rem;
+    color: var(--accent-primary);
+    margin-top: var(--spacing-sm);
+    font-weight: 500;
+    opacity: 0.9;
+}
+
 /* Stats Grid */
 .stats-grid {
     display: grid;
