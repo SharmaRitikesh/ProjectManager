@@ -35,6 +35,17 @@ public class ProjectService {
 
     @Transactional(readOnly = true)
     public List<ProjectResponse> getAllProjects() {
+        // Return ALL projects for all users (public visibility)
+        List<Project> projects = projectRepository.findAll();
+
+        return projects.stream()
+                .map(this::enrichProjectResponse)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public List<ProjectResponse> getMyProjects() {
+        // Return only projects where user is owner or member
         User currentUser = userService.getCurrentUser();
         List<Project> projects = projectRepository.findAllByUserAccess(currentUser);
 
@@ -101,9 +112,14 @@ public class ProjectService {
                 .orElseThrow(() -> new RuntimeException("Project not found with id: " + id));
 
         User currentUser = userService.getCurrentUser();
-        if (!project.getOwner().getId().equals(currentUser.getId())) {
-            throw new RuntimeException("Only the project owner can delete this project");
+
+        // Only ADMIN can delete projects
+        if (currentUser.getSystemRole() != User.SystemRole.ADMIN) {
+            throw new RuntimeException("Only administrators can delete projects");
         }
+
+        // Delete all project members first to avoid foreign key constraint
+        memberRepository.deleteAll(memberRepository.findByProject(project));
 
         projectRepository.delete(project);
     }

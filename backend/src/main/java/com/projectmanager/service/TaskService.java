@@ -142,7 +142,15 @@ public class TaskService {
         Task task = taskRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Task not found with id: " + id));
 
-        checkProjectAccess(task.getProject());
+        User currentUser = userService.getCurrentUser();
+
+        // Allow if user is the assignee OR has project access
+        boolean isAssignee = task.getAssignee() != null &&
+                task.getAssignee().getId().equals(currentUser.getId());
+
+        if (!isAssignee) {
+            checkProjectAccess(task.getProject());
+        }
 
         task.setStatus(status);
         task = taskRepository.save(task);

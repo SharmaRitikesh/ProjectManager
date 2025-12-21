@@ -51,7 +51,7 @@ function DashboardPage() {
     const loadDashboardData = async () => {
         try {
             const [projectsRes, tasksRes] = await Promise.all([
-                projectAPI.getAll(),
+                projectAPI.getMy(),  // Only user's own projects for dashboard
                 taskAPI.getMyTasks()
             ]);
             setProjects(projectsRes.data);
