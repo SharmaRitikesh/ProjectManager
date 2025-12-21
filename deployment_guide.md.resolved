@@ -1,0 +1,60 @@
+# Free Cloud Deployment Guide
+
+This guide will walk you through deploying your full-stack application for free using **Neon** (Database), **Render** (Backend), and **Vercel** (Frontend).
+
+## Prerequisites
+1.  Push your code to a **GitHub Repository**.
+2.  Sign up for [Neon](https://neon.tech), [Render](https://render.com), and [Vercel](https://vercel.com).
+
+---
+
+## Step 1: Database Setup (Neon)
+1.  Log in to **NeonConsole** and create a new project.
+2.  Once created, copy the **Connection String** from the dashboard.
+    - It looks like: `postgres://user:password@ep-xyz.region.aws.neon.tech/neondb?sslmode=require`
+
+---
+
+## Step 2: Backend Deployment (Render)
+1.  Log in to **Render** and click **New +** -> **Web Service**.
+2.  Connect your GitHub repository.
+3.  **Configuration**:
+    - **Name**: `project-manager-backend` (or similar)
+    - **Root Directory**: `backend` (IMPORTANT: Your backend code is in a subdirectory)
+    - **Runtime**: `Docker` (Render will automatically find the Dockerfile we created)
+    - **Instance Type**: Free
+4.  **Environment Variables** (Advanced -> Add Environment Variable):
+    - `PORT`: `8080`
+    - `DATABASE_URL`: (Paste your Neon Connection String here)
+    - `JWT_SECRET`: (Enter a long random string, e.g., `mysecretkey123456`)
+    - `CORS_ORIGINS`: `*` (Or wait until you have your Vercel URL, then update this)
+5.  Click **Create Web Service**.
+6.  Wait for the build to finish. Once live, copy the **Service URL** (e.g., `https://project-manager-backend.onrender.com`).
+
+---
+
+## Step 3: Frontend Deployment (Vercel)
+1.  Log in to **Vercel** and click **Add New...** -> **Project**.
+2.  Import your GitHub repository.
+3.  **Configure Project**:
+    - **Framework Preset**: Vite (should be auto-detected).
+    - **Root Directory**: Click "Edit" and select `frontend`.
+4.  **Environment Variables**:
+    - Key: `VITE_API_URL`
+    - Value: The **Render Service URL** from Step 2 (e.g., `https://project-manager-backend.onrender.com`).
+    *Note: Do NOT add a trailing slash `/` at the end.*
+5.  Click **Deploy**.
+6.  Once complete, your app is live!
+
+---
+
+## Step 4: Final Connection
+1.  Go back to **Render Dashboard** -> Your Web Service -> **Environment**.
+2.  Edit `CORS_ORIGINS`.
+3.  Set it to your new **Vercel URL** (e.g., `https://project-manager-frontend.vercel.app`).
+    - Note: If you set it to `*` earlier, you can leave it, but setting the specific URL is more secure.
+
+## Troubleshooting
+- **Backend Build Fails**: Check the logs. Ensure [Dockerfile](file:///c:/Users/Ritikesh/Downloads/Full%20Stack%20development_Project%20Management%20Using%20JAVA%20+%20React/backend/Dockerfile) is in the `backend` folder.
+- **Frontend can't connect**: Open Developer Tools (F12) -> Console. Check if `VITE_API_URL` is loading correctly. It should point to the Render URL.
+- **Database Errors**: Ensure your `DATABASE_URL` in Render starts with `postgres://` or `postgresql://`.
