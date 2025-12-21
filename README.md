@@ -1,4 +1,4 @@
-# Project Manager - Full Stack Application
+# Project Manager - Full Stack Application.
 
 A modern, full-featured project management application built with **Java Spring Boot** and **React**.
 
