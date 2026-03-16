@@ -1,8 +1,8 @@
 from pptx import Presentation
 from pptx.util import Inches, Pt
-from pptx.dml.color import RgbColor
-from pptx.enum.text import PP_ALIGN, MSO_ANCHOR
+from pptx.enum.text import PP_ALIGN
 from pptx.enum.shapes import MSO_SHAPE
+from pptx.dml.color import RGBColor
 import os
 
 # Create presentation with 16:9 aspect ratio
@@ -10,16 +10,14 @@ prs = Presentation()
 prs.slide_width = Inches(13.333)
 prs.slide_height = Inches(7.5)
 
-# Color scheme - Professional academic theme
-NAVY_BLUE = RgbColor(0, 51, 102)
-DARK_BLUE = RgbColor(0, 32, 64)
-WHITE = RgbColor(255, 255, 255)
-LIGHT_GRAY = RgbColor(240, 240, 240)
-BLACK = RgbColor(0, 0, 0)
+# Color constants 
+NAVY_BLUE = RGBColor(0, 51, 102)
+DARK_BLUE = RGBColor(0, 32, 64)
+WHITE = RGBColor(255, 255, 255)
+BLACK = RGBColor(0, 0, 0)
 
-def add_title_shape(slide, title_text, subtitle_text=None):
+def add_title_shape(slide, title_text):
     """Add a styled title to the slide"""
-    # Title
     title_box = slide.shapes.add_textbox(Inches(0.5), Inches(0.3), Inches(12.333), Inches(0.8))
     tf = title_box.text_frame
     tf.paragraphs[0].text = title_text
@@ -48,7 +46,7 @@ def add_bullet_point(text_frame, text, level=0, font_size=18):
 slide_layout = prs.slide_layouts[6]  # Blank layout
 slide = prs.slides.add_slide(slide_layout)
 
-# Background (light gradient effect using rectangle)
+# Background
 bg = slide.shapes.add_shape(MSO_SHAPE.RECTANGLE, 0, 0, prs.slide_width, prs.slide_height)
 bg.fill.solid()
 bg.fill.fore_color.rgb = WHITE
@@ -129,13 +127,11 @@ content_box = slide.shapes.add_textbox(Inches(0.5), Inches(1.4), Inches(12.333),
 tf = content_box.text_frame
 tf.word_wrap = True
 
-# Problem Overview
 p = tf.paragraphs[0]
 p.text = "Problem Overview"
 p.font.size = Pt(20)
 p.font.bold = True
 p.font.color.rgb = NAVY_BLUE
-p.space_after = Pt(8)
 
 add_bullet_point(tf, "Organizations face challenges in managing multiple projects, tracking task progress, and ensuring effective team collaboration across distributed teams.")
 
@@ -148,7 +144,6 @@ p.text = "Purpose of the Project"
 p.font.size = Pt(20)
 p.font.bold = True
 p.font.color.rgb = NAVY_BLUE
-p.space_after = Pt(8)
 
 add_bullet_point(tf, "To develop a comprehensive web-based project management system that streamlines task allocation, progress monitoring, and team communication.")
 
@@ -161,7 +156,6 @@ p.text = "Solution Approach"
 p.font.size = Pt(20)
 p.font.bold = True
 p.font.color.rgb = NAVY_BLUE
-p.space_after = Pt(8)
 
 add_bullet_point(tf, "A full-stack web application built with React.js frontend and Java Spring Boot backend, utilizing MySQL for persistent data storage.")
 add_bullet_point(tf, "JWT-based authentication ensures secure access, while role-based authorization enables appropriate access control for users, managers, and administrators.")
@@ -207,7 +201,7 @@ for i, (title, desc) in enumerate(objectives):
 slide = prs.slides.add_slide(slide_layout)
 add_title_shape(slide, "Literature Survey")
 
-# Left column - Existing Tools
+# Left column
 left_box = slide.shapes.add_textbox(Inches(0.5), Inches(1.4), Inches(5.8), Inches(5.5))
 tf = left_box.text_frame
 tf.word_wrap = True
@@ -238,7 +232,7 @@ for tool, desc in tools:
     p.font.size = Pt(14)
     p.font.color.rgb = DARK_BLUE
 
-# Right column - Technologies & Limitations
+# Right column
 right_box = slide.shapes.add_textbox(Inches(6.8), Inches(1.4), Inches(6), Inches(5.5))
 tf = right_box.text_frame
 tf.word_wrap = True
@@ -279,7 +273,6 @@ for lim in limitations:
 slide = prs.slides.add_slide(slide_layout)
 add_title_shape(slide, "Existing System")
 
-# Left Panel - Description
 left_box = slide.shapes.add_textbox(Inches(0.5), Inches(1.4), Inches(5.8), Inches(5.5))
 tf = left_box.text_frame
 tf.word_wrap = True
@@ -304,7 +297,6 @@ for method in methods:
     p.font.color.rgb = BLACK
     p.space_before = Pt(8)
 
-# Right Panel - Problems
 right_box = slide.shapes.add_textbox(Inches(6.8), Inches(1.4), Inches(6), Inches(5.5))
 tf = right_box.text_frame
 tf.word_wrap = True
@@ -340,7 +332,6 @@ for title, desc in problems:
 slide = prs.slides.add_slide(slide_layout)
 add_title_shape(slide, "Proposed System")
 
-# Left Panel - Description
 left_box = slide.shapes.add_textbox(Inches(0.5), Inches(1.4), Inches(5.8), Inches(5.2))
 tf = left_box.text_frame
 tf.word_wrap = True
@@ -377,12 +368,11 @@ features = [
 ]
 for feature in features:
     p = tf.add_paragraph()
-    p.text = f"✓ {feature}"
+    p.text = f"+ {feature}"
     p.font.size = Pt(14)
     p.font.color.rgb = BLACK
     p.space_before = Pt(5)
 
-# Right Panel - Advantages
 right_box = slide.shapes.add_textbox(Inches(6.8), Inches(1.4), Inches(6), Inches(5.2))
 tf = right_box.text_frame
 tf.word_wrap = True
@@ -418,17 +408,17 @@ for title, desc in advantages:
 slide = prs.slides.add_slide(slide_layout)
 add_title_shape(slide, "System Architecture - Block Diagram")
 
-# Try to add the generated block diagram image
+# Add the generated block diagram image
 image_path = r"C:\Users\Ritikesh\.gemini\antigravity\brain\b4421934-838a-4533-b9a0-13f41ebab9e0\block_diagram_1767824485799.png"
 if os.path.exists(image_path):
     slide.shapes.add_picture(image_path, Inches(0.8), Inches(1.4), Inches(11.5), Inches(5))
 else:
-    # Fallback: Create text-based diagram representation
+    # Fallback text
     diagram_box = slide.shapes.add_textbox(Inches(0.5), Inches(1.8), Inches(12.333), Inches(4))
     tf = diagram_box.text_frame
     tf.word_wrap = True
     p = tf.paragraphs[0]
-    p.text = "[Block Diagram Image - Please insert the architecture diagram manually]"
+    p.text = "[Block Diagram Image - architecture_diagram_1766244740164.png]"
     p.font.size = Pt(16)
     p.font.color.rgb = DARK_BLUE
     p.alignment = PP_ALIGN.CENTER
@@ -436,7 +426,7 @@ else:
 # Architecture description
 desc_box = slide.shapes.add_textbox(Inches(0.5), Inches(6.5), Inches(12.333), Inches(0.8))
 tf = desc_box.text_frame
-tf.paragraphs[0].text = "Three-tier Architecture: React Frontend → Spring Boot REST API → MySQL Database"
+tf.paragraphs[0].text = "Three-tier Architecture: React Frontend > Spring Boot REST API > MySQL Database"
 tf.paragraphs[0].font.size = Pt(14)
 tf.paragraphs[0].font.color.rgb = DARK_BLUE
 tf.paragraphs[0].alignment = PP_ALIGN.CENTER
@@ -444,4 +434,4 @@ tf.paragraphs[0].alignment = PP_ALIGN.CENTER
 # Save the presentation
 output_path = r"c:\Users\Ritikesh\Downloads\Full Stack development_Project Management Using JAVA + React\Project_Management_Presentation.pptx"
 prs.save(output_path)
-print(f"Presentation saved to: {output_path}")
+print(f"Presentation saved successfully to: {output_path}")
